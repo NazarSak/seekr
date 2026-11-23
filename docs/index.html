@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seekr: a small search engine</title>
+<style>
+  :root { --bg:#fff; --fg:#1b1f24; --muted:#59636e; --line:#d1d9e0; --accent:#0b57d0; --mark:#fff3b0; --card:#f6f8fa; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --line:#30363d; --accent:#4493f8; --mark:#5a4a00; --card:#151b23; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:2.5rem 1.2rem 4rem; }
+  h1 { font-size:2.4rem; margin:0 0 .2rem; } h1 span { color:var(--accent); }
+  h2 { margin:2.6rem 0 .6rem; font-size:1.35rem; }
+  p.lead { color:var(--muted); margin-top:0; font-size:1.1rem; }
+  a { color:var(--accent); }
+  .links a { display:inline-block; margin:.2rem .8rem .2rem 0; }
+  form { display:flex; gap:.5rem; margin:.8rem 0 .3rem; }
+  input[type=text] { flex:1; padding:.6rem .7rem; font-size:1rem; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg); }
+  button { padding:.6rem 1rem; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--fg); cursor:pointer; font-size:1rem; }
+  .opts { color:var(--muted); font-size:.9rem; }
+  .chips a { display:inline-block; margin:.3rem .4rem 0 0; padding:.1rem .6rem; border:1px solid var(--line); border-radius:99px; font-size:.88rem; text-decoration:none; }
+  #meta { color:var(--muted); font-size:.9rem; margin:1rem 0 .4rem; }
+  .hit { padding:.7rem 0; border-top:1px solid var(--line); }
+  .hit .t { font-weight:600; }
+  .hit .p { color:var(--muted); font-size:.85rem; }
+  .hit .s { margin:.2rem 0; } mark { background:var(--mark); color:inherit; padding:0 .1em; border-radius:2px; }
+  .why { font:12.5px/1.45 ui-monospace,Consolas,monospace; background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.4rem .6rem; margin-top:.3rem; }
+  img { max-width:100%; border:1px solid var(--line); border-radius:8px; }
+  table { border-collapse:collapse; width:100%; font-size:.95rem; } td,th { border-bottom:1px solid var(--line); padding:.4rem .5rem; text-align:left; }
+  code { background:var(--card); padding:.1em .35em; border-radius:4px; font-size:.92em; }
+  .note { color:var(--muted); font-size:.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1><span>S</span>eekr</h1>
+  <p class="lead">A small search engine built to understand how search works: positional inverted index, TF-IDF and BM25 ranking, boolean, phrase and fuzzy queries, highlighted snippets, a persisted index and a web UI. Python standard library only.</p>
+  <p class="links">
+    <a href="https://github.com/NazarSak/seekr">Source code on GitHub</a>
+    <a href="https://github.com/NazarSak/seekr#readme">README</a>
+    <a href="https://github.com/NazarSak/seekr/releases/tag/v1.0">Release v1.0</a>
+  </p>
+
+  <h2>Try it in your browser</h2>
+  <p class="note">This page runs a small JavaScript port of the same tokenizer and TF-IDF formula over the 12 bundled SEO articles. The real engine is the Python package in the repository.</p>
+  <form id="f"><input type="text" id="q" value="crawl budget" autocomplete="off" aria-label="Search query"><button>Search</button></form>
+  <label class="opts"><input type="checkbox" id="why"> explain scores (teaching mode)</label>
+  <div class="chips">
+    <a href="#" data-q="crawl budget">crawl budget</a>
+    <a href="#" data-q="&quot;search intent&quot;">"search intent"</a>
+    <a href="#" data-q="crawl -budget">crawl -budget</a>
+    <a href="#" data-q="canonical OR hreflang">canonical OR hreflang</a>
+    <a href="#" data-q="the of and">the of and</a>
+  </div>
+  <div id="meta"></div>
+  <div id="out"></div>
+  <p class="note">Supported here: implicit AND, <code>OR</code>, <code>NOT</code> / <code>-term</code>, <code>"exact phrase"</code>. Fuzzy (<code>~</code>), prefix (<code>*</code>), grouping and BM25 are in the Python version.</p>
+
+  <h2>Terminal demo</h2>
+  <img src="demo.gif" alt="Terminal demo of seekr: index, search with explanation, phrase search, fuzzy search, benchmark">
+  <p class="note">The commands are really executed; their output is rendered into the GIF by <code>scripts/make_demo_gif.py</code>.</p>
+
+  <h2>Web UI of the Python version</h2>
+  <img src="screenshot.png" alt="Seekr web UI showing ranked results for crawl budget with score explanation">
+
+  <h2>What is inside</h2>
+  <table>
+    <tr><th>Part</th><th>What it does</th></tr>
+    <tr><td>Tokenizer</td><td>Lowercase, Unicode-aware words, stop words, light stemmer; positions keep dropped stop words so phrases stay exact</td></tr>
+    <tr><td>Inverted index</td><td><code>term → {document → [positions]}</code>, one dictionary lookup per term</td></tr>
+    <tr><td>Query language</td><td>AND / OR / NOT, grouping, phrases, fuzzy (Levenshtein ≤ 2), prefix</td></tr>
+    <tr><td>Ranking</td><td>TF-IDF with smoothed idf and length normalisation; BM25; per-term explanation</td></tr>
+    <tr><td>Persistence</td><td>gzip JSON with delta-encoded positions, atomic write</td></tr>
+    <tr><td>Quality</td><td>25 unit tests, benchmark against brute-force scanning</td></tr>
+  </table>
+  <p class="note">Measured on 20,000 synthetic documents (48 MB): rare-term queries answer in about 4 ms, roughly 127 times faster than scanning every file; full numbers and limits are in the README.</p>
+</main>
+
+<script>
+const STOP = new Set("a an and are as at be been but by for from had has have he her his i if in into is it its of on or she so than that the their them then there these they this to was we were what when which who will with you your not no do does did can could would should about also".split(" "));
+const WORD = /[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu;
+
+function stem(w) {
+  if (w.length <= 3 || !/^[\x00-\x7f]+$/.test(w)) return w;
+  if (w.endsWith("ies") && w.length > 4) return w.slice(0, -3) + "y";
+  if (w.endsWith("sses")) return w.slice(0, -2);
+  if (/(xes|ches|shes)$/.test(w)) return w.slice(0, -2);
+  for (const suf of ["edly", "ing", "ed"]) {
+    if (w.endsWith(suf) && w.length - suf.length >= 3) {
+      let base = w.slice(0, -suf.length);
+      if (!/[aeiou]/.test(base)) return w;
+      if (base.length > 2 && base.at(-1) === base.at(-2) && !"lszaeiou".includes(base.at(-1))) base = base.slice(0, -1);
+      return base;
+    }
+  }
+  if (w.endsWith("ly") && w.length > 5) return w.slice(0, -2);
+  if (w.endsWith("s") && !/(ss|us|is)$/.test(w)) return w.slice(0, -1);
+  return w;
+}
+const norm = t => stem(t.toLowerCase().replace(/’/g, "'"));
+function analyze(text) {
+  const out = []; let pos = 0;
+  for (const m of text.matchAll(WORD)) {
+    const raw = m[0].toLowerCase().replace(/’/g, "'");
+    if (!STOP.has(raw)) out.push([stem(raw), pos]);
+    pos++;
+  }
+  return out;
+}
+
+let DOCS = [], POST = new Map(), LEN = [];
+function build(docs) {
+  DOCS = docs; POST = new Map(); LEN = [];
+  docs.forEach((d, id) => {
+    const toks = analyze(d.title + "\n" + d.text);
+    LEN.push(toks.length);
+    for (const [t, p] of toks) {
+      if (!POST.has(t)) POST.set(t, new Map());
+      const m = POST.get(t);
+      if (!m.has(id)) m.set(id, []);
+      m.get(id).push(p);
+    }
+  });
+}
+const idf = t => Math.log(1 + DOCS.length / (POST.get(t)?.size || 1));
+
+function evalTerm(raw) {
+  const toks = analyze(raw);
+  if (!toks.length) return { docs: null, terms: [] };
+  if (toks.length === 1) { const t = toks[0][0]; return { docs: new Set(POST.get(t)?.keys() || []), terms: [t] }; }
+  return phrase(toks);
+}
+function phrase(toks) {
+  const [t0, p0] = toks[0], rest = toks.slice(1).map(([t, p]) => [t, p - p0]);
+  const terms = [...new Set(toks.map(x => x[0]))];
+  let cand = new Set(POST.get(t0)?.keys() || []);
+  for (const [t] of rest) { const s = POST.get(t); cand = new Set([...cand].filter(d => s?.has(d))); }
+  const hits = new Set();
+  for (const d of cand) {
+    const others = rest.map(([t, off]) => [new Set(POST.get(t).get(d)), off]);
+    if (POST.get(t0).get(d).some(s => others.every(([ps, off]) => ps.has(s + off)))) hits.add(d);
+  }
+  return { docs: hits, terms };
+}
+function search(q) {
+  const parts = q.match(/"[^"]*"|\S+/g) || [];
+  if (!parts.length) return { error: "empty query" };
+  const groups = [[]];
+  for (const p of parts) { if (p === "OR") groups.push([]); else groups.at(-1).push(p); }
+  let all = null, terms = [];
+  for (const g of groups) {
+    let acc = null, neg = new Set();
+    for (let i = 0; i < g.length; i++) {
+      let p = g[i], negate = false;
+      if (p === "AND") continue;
+      if (p === "NOT") { negate = true; p = g[++i]; if (!p) return { error: "NOT needs a term" }; }
+      else if (p.startsWith("-") && p.length > 1) { negate = true; p = p.slice(1); }
+      const r = p.startsWith('"') ? phrase_or_term(p.replace(/"/g, "")) : evalTerm(p);
+      if (!r.docs) continue;
+      if (negate) r.docs.forEach(d => neg.add(d));
+      else { terms.push(...r.terms); acc = acc ? new Set([...acc].filter(d => r.docs.has(d))) : r.docs; }
+    }
+    if (acc === null && neg.size) acc = new Set(DOCS.map((_, i) => i));
+    if (acc) { neg.forEach(d => acc.delete(d)); all = all ? new Set([...all, ...acc]) : acc; }
+  }
+  if (all === null) return { stop: true };
+  terms = [...new Set(terms)];
+  const scored = [...all].map(d => {
+    const parts = [];
+    for (const t of terms) {
+      const pos = POST.get(t)?.get(d); if (!pos) continue;
+      const w = (1 + Math.log(pos.length)) * idf(t) / Math.sqrt(Math.max(LEN[d], 1));
+      parts.push({ t, tf: pos.length, df: POST.get(t).size, idf: idf(t), w });
+    }
+    return { d, score: parts.reduce((a, b) => a + b.w, 0), parts, norm: Math.sqrt(Math.max(LEN[d], 1)) };
+  }).sort((a, b) => b.score - a.score || DOCS[a.d].path.localeCompare(DOCS[b.d].path));
+  return { hits: scored, terms };
+}
+function phrase_or_term(s) { const t = analyze(s); return t.length > 1 ? phrase(t) : evalTerm(s); }
+
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function snippet(text, terms, width = 170) {
+  const set = new Set(terms);
+  const hits = [...text.matchAll(WORD)].filter(m => set.has(norm(m[0]))).map(m => [m.index, m.index + m[0].length]);
+  let start = 0;
+  if (hits.length) {
+    let best = -1;
+    for (const [s] of hits) {
+      const lo = Math.max(0, s - Math.floor(width / 5));
+      const n = hits.filter(([a, b]) => a >= lo && b <= lo + width).length;
+      if (n > best) { best = n; start = lo; }
+    }
+  }
+  let end = Math.min(text.length, start + width);
+  if (start > 0) { const nx = text.indexOf(" ", start); if (nx !== -1) start = nx + 1; }
+  if (end < text.length) { const c = text.lastIndexOf(" ", end); if (c > start) end = c; }
+  const win = text.slice(start, end).replace(/\s+/g, " ").trim();
+  let html = "", last = 0;
+  for (const m of win.matchAll(WORD)) {
+    if (!set.has(norm(m[0]))) continue;
+    html += esc(win.slice(last, m.index)) + "<mark>" + esc(m[0]) + "</mark>";
+    last = m.index + m[0].length;
+  }
+  html += esc(win.slice(last));
+  return (start > 0 ? "… " : "") + html + (end < text.length ? " …" : "");
+}
+
+function render() {
+  const q = document.getElementById("q").value.trim(), why = document.getElementById("why").checked;
+  const meta = document.getElementById("meta"), out = document.getElementById("out");
+  out.innerHTML = "";
+  if (!q) { meta.textContent = ""; return; }
+  const t0 = performance.now(), r = search(q), ms = performance.now() - t0;
+  if (r.error) { meta.textContent = "query error: " + r.error; return; }
+  if (r.stop) { meta.textContent = "the query has only stop words (too common to search for), try more specific words"; return; }
+  meta.textContent = r.hits.length ? `${r.hits.length} result(s) in ${ms.toFixed(2)} ms` : "no results";
+  for (const h of r.hits.slice(0, 10)) {
+    const d = DOCS[h.d], el = document.createElement("div");
+    el.className = "hit";
+    let extra = "";
+    if (why) extra = '<div class="why">tfidf: ' + h.parts.map(p => `${esc(p.t)}: tf=${p.tf} df=${p.df} idf=${p.idf.toFixed(3)} → ${p.w.toFixed(4)}`).join("<br>") + `<br>length-norm=${h.norm.toFixed(3)} → score=${h.score.toFixed(4)}</div>`;
+    el.innerHTML = `<div class="t">${esc(d.title)}</div><div class="s">${snippet(d.text, r.terms)}</div><div class="p">${esc(d.path)} · score ${h.score.toFixed(3)}</div>${extra}`;
+    out.appendChild(el);
+  }
+}
+document.getElementById("f").addEventListener("submit", e => { e.preventDefault(); render(); });
+document.getElementById("q").addEventListener("input", render);
+document.getElementById("why").addEventListener("change", render);
+document.querySelectorAll(".chips a").forEach(a => a.addEventListener("click", e => {
+  e.preventDefault(); document.getElementById("q").value = a.dataset.q; render();
+}));
+fetch("corpus.json").then(r => r.json()).then(d => { build(d); render(); })
+  .catch(() => { document.getElementById("meta").textContent = "could not load corpus.json"; });
+</script>
+</body>
+</html>

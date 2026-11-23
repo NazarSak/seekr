@@ -1,0 +1,62 @@
+[
+ {
+  "path": "01-keyword-research.md",
+  "title": "Keyword Research Basics",
+  "text": "Keyword research is the process of finding the words people type into a search engine when they want something. Start with seed keywords from your product, then expand them with autocomplete suggestions, related searches and competitor pages. For every keyword record the monthly search volume, the difficulty and the search intent. A keyword with huge volume but the wrong intent will bring visitors who never convert. Group similar keywords into clusters and map each cluster to exactly one page, so your own pages do not compete with each other. Long tail keywords have lower volume but are easier to rank for and usually convert better. Revisit the list every quarter, because language and trends change."
+ },
+ {
+  "path": "02-search-intent.md",
+  "title": "Understanding Search Intent",
+  "text": "Search intent describes the goal behind a query. Informational queries look for answers, navigational queries look for a specific site, commercial queries compare options and transactional queries are ready to buy. Search engines work hard to match the intent, so a page that fits the keyword but not the intent will not rank. The quickest way to learn the intent is to read the results page itself: if the top results are all guides, a product page will struggle. Good content briefs state the intent, the expected format and the questions that the page must answer. When intent is mixed, create separate pages for each meaning instead of forcing one page to serve everyone."
+ },
+ {
+  "path": "03-crawl-budget.md",
+  "title": "Crawl Budget Explained",
+  "text": "Crawl budget is the number of URLs a search engine bot is willing and able to fetch from your site in a given period. Small sites rarely need to worry, but large shops, news sites and sites with faceted navigation often waste their budget on duplicate and parameter URLs. Signs of trouble include important pages that are crawled rarely, new pages that take weeks to appear in the index, and bots spending most requests on filters. To improve crawl efficiency, fix slow server responses, remove redirect chains, block useless parameters in robots.txt, keep the XML sitemap clean and link to important pages from many places. Log file analysis shows where the bot really goes."
+ },
+ {
+  "path": "04-canonical-tags.md",
+  "title": "Canonical Tags",
+  "text": "A canonical tag tells search engines which URL is the preferred version of a page when several URLs show the same or very similar content. Duplicates appear through tracking parameters, sorting options, http and https versions, and trailing slashes. The tag is a hint, not a command: if the canonical points to a page that looks different, the engine may ignore it. Every indexable page should carry a self referencing canonical. Never combine a canonical to another page with a noindex tag, and never point a canonical at a redirecting or blocked URL. Check the canonicals in your crawl reports and compare them with the URL that Google actually selected."
+ },
+ {
+  "path": "05-hreflang.md",
+  "title": "Hreflang for Multilingual Sites",
+  "text": "Hreflang annotations tell search engines which language and regional version of a page to show to which user. A site with English, Spanish and Ukrainian pages needs each version to reference all the others and itself, otherwise the annotations are ignored. Use language codes, optionally combined with country codes, such as es-VE for Spanish in Venezuela. Add an x-default for users who match no version. Annotations can live in the page head, in HTTP headers or in the XML sitemap; choose one place and keep it consistent. Machine translation without review rarely ranks well, so invest in native editing for every market and localise examples, currencies and units."
+ },
+ {
+  "path": "06-core-web-vitals.md",
+  "title": "Core Web Vitals",
+  "text": "Core Web Vitals measure real user experience. Largest Contentful Paint reports how quickly the main content appears, Interaction to Next Paint reports how fast the page responds to clicks and taps, and Cumulative Layout Shift reports how much the layout jumps while loading. Field data from real visitors matters more than a lab score from a single test run. To improve loading, compress and properly size images, serve them in modern formats, preload the hero image, defer non-critical scripts and use a content delivery network. Reserve space for images and ads to avoid layout shifts. Performance is a ranking signal, but a modest one; it mostly protects conversions."
+ },
+ {
+  "path": "07-backlinks.md",
+  "title": "Backlinks and Authority",
+  "text": "A backlink is a link from another website to yours. Search engines treat links as votes of confidence, and the idea of weighting those votes by the importance of the voter is the heart of PageRank. A few links from relevant, trusted sites are worth more than thousands from directories and spam networks. Earn links with original research, useful tools, expert quotes and genuinely good guides. Digital PR and partnerships work when they give journalists something worth citing. Avoid paid link schemes, because manual penalties are painful to remove. Audit your link profile regularly, watch the anchor text distribution and disavow only clearly toxic links when you have a real problem."
+ },
+ {
+  "path": "08-schema-markup.md",
+  "title": "Schema Markup and Structured Data",
+  "text": "Structured data describes the meaning of a page in a vocabulary that machines understand. JSON-LD is the recommended format and is placed in a script block, separate from the visible HTML. Common types are Article, Product, FAQPage, BreadcrumbList, Organization and LocalBusiness. Valid markup can make a result eligible for rich snippets, such as star ratings, prices and breadcrumbs, which often improve the click through rate. The markup must describe content that users can actually see; invented reviews or hidden text violate the guidelines. Validate every template with the Rich Results Test, monitor the enhancement reports in Search Console and update the markup whenever the page changes."
+ },
+ {
+  "path": "09-internal-linking.md",
+  "title": "Internal Linking",
+  "text": "Internal links connect the pages of one site. They help crawlers discover content, pass authority from strong pages to weaker ones and show users where to go next. A flat structure keeps important pages within three clicks of the homepage. Use descriptive anchor text instead of \"click here\", and link from high traffic articles to the pages that should rank. Orphan pages, which no other page links to, are hard for bots to find and should be linked or removed. Breadcrumbs, related article blocks and hub pages create a natural topical structure. After publishing a new article, add links to it from at least three relevant existing pages."
+ },
+ {
+  "path": "10-content-briefs.md",
+  "title": "Writing Content Briefs",
+  "text": "A content brief turns research into instructions a writer can follow. It states the target keyword, the search intent, the audience, the outline with headings, the questions to answer, the entities and terms to cover, and the desired length. Include competitor examples and what makes your page different. A brief should also list internal links to add, the call to action and the tone of voice. Good briefs reduce revision rounds, because the writer knows what success looks like before the first draft. For multilingual projects add the target country, local examples and any words to avoid. Review the finished article against the brief, not against personal taste."
+ },
+ {
+  "path": "11-log-file-analysis.md",
+  "title": "Log File Analysis",
+  "text": "Server logs record every request, including those of search engine bots. Analysing them shows which URLs are crawled, how often, with which status codes and how long the server needed to respond. Verify that a visitor claiming to be a bot really is one by checking its IP address, because fake user agents are common. Compare crawled URLs with the URLs in your sitemap: pages that are never crawled need better links, and heavily crawled low value URLs waste budget. Spikes of error codes after a release point to broken deployments. Export a month of logs, group requests by directory and status, and track the trend after every technical fix."
+ },
+ {
+  "path": "12-robots-txt.md",
+  "title": "Robots.txt Guide",
+  "text": "The robots.txt file lives at the root of a domain and tells crawlers which paths they may fetch. It controls crawling, not indexing: a blocked URL can still appear in results if other sites link to it. To keep a page out of the index, allow crawling and use a noindex directive instead. Group rules by user agent, use the Allow and Disallow directives, and reference the XML sitemap with a Sitemap line. Never block the CSS and JavaScript files that a page needs to render. Test every change before deploying, because a single misplaced slash can block an entire site. Keep the file small, comment unusual rules and review it after each migration."
+ }
+]
