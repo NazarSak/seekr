@@ -2,6 +2,8 @@
 
 A small search engine written to understand how search actually works: a **positional inverted index**, **TF-IDF / BM25** ranking, a **boolean + phrase + fuzzy** query language, highlighted snippets, a persisted index and a plain **1998-style web UI**. Python standard library only, zero dependencies.
 
+**Live demo (search in your browser):** https://nazarsak.github.io/seekr/
+
 Based on Lab 15 of [Programming-Practice-Projects](https://github.com/rmalkevy/Programming-Practice-Projects) ("Build a 1998-Era Google").
 
 ```
