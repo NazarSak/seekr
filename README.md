@@ -18,7 +18,9 @@ $ seekr search "search intent" -n 3
 
 ![Seekr web UI: ranked results for "crawl budget" with score explanation](docs/screenshot.png)
 
-> TODO before submitting: add a 30-second terminal recording / GIF of the demo script at the bottom (e.g. asciinema or ScreenToGif) as `docs/demo.gif`.
+![Terminal demo](docs/demo.gif)
+
+*Terminal demo: the commands are really executed and their output is rendered by `scripts/make_demo_gif.py` (only the typing is animated).*
 
 ## Level achieved
 
@@ -131,7 +133,7 @@ src/seekr/  tokenizer.py  index.py  query.py  ranker.py  snippets.py
             persist.py  loader.py  engine.py  fuzzy.py  web.py  cli.py  bench.py
 tests/      25 unit tests (stdlib unittest)
 corpus/     12 SEO articles (written for this project)
-scripts/    fetch_gutenberg.py
+scripts/    fetch_gutenberg.py  make_demo_gif.py
 ```
 
 ## Contributions
