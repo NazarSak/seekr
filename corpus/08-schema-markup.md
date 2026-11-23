@@ -1,0 +1,3 @@
+# Schema Markup and Structured Data
+
+Structured data describes the meaning of a page in a vocabulary that machines understand. JSON-LD is the recommended format and is placed in a script block, separate from the visible HTML. Common types are Article, Product, FAQPage, BreadcrumbList, Organization and LocalBusiness. Valid markup can make a result eligible for rich snippets, such as star ratings, prices and breadcrumbs, which often improve the click through rate. The markup must describe content that users can actually see; invented reviews or hidden text violate the guidelines. Validate every template with the Rich Results Test, monitor the enhancement reports in Search Console and update the markup whenever the page changes.

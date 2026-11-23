@@ -1,0 +1,3 @@
+# Backlinks and Authority
+
+A backlink is a link from another website to yours. Search engines treat links as votes of confidence, and the idea of weighting those votes by the importance of the voter is the heart of PageRank. A few links from relevant, trusted sites are worth more than thousands from directories and spam networks. Earn links with original research, useful tools, expert quotes and genuinely good guides. Digital PR and partnerships work when they give journalists something worth citing. Avoid paid link schemes, because manual penalties are painful to remove. Audit your link profile regularly, watch the anchor text distribution and disavow only clearly toxic links when you have a real problem.

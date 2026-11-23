@@ -1,0 +1,3 @@
+# Understanding Search Intent
+
+Search intent describes the goal behind a query. Informational queries look for answers, navigational queries look for a specific site, commercial queries compare options and transactional queries are ready to buy. Search engines work hard to match the intent, so a page that fits the keyword but not the intent will not rank. The quickest way to learn the intent is to read the results page itself: if the top results are all guides, a product page will struggle. Good content briefs state the intent, the expected format and the questions that the page must answer. When intent is mixed, create separate pages for each meaning instead of forcing one page to serve everyone.

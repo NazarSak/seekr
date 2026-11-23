@@ -1,0 +1,3 @@
+# Hreflang for Multilingual Sites
+
+Hreflang annotations tell search engines which language and regional version of a page to show to which user. A site with English, Spanish and Ukrainian pages needs each version to reference all the others and itself, otherwise the annotations are ignored. Use language codes, optionally combined with country codes, such as es-VE for Spanish in Venezuela. Add an x-default for users who match no version. Annotations can live in the page head, in HTTP headers or in the XML sitemap; choose one place and keep it consistent. Machine translation without review rarely ranks well, so invest in native editing for every market and localise examples, currencies and units.

@@ -1,0 +1,3 @@
+# Core Web Vitals
+
+Core Web Vitals measure real user experience. Largest Contentful Paint reports how quickly the main content appears, Interaction to Next Paint reports how fast the page responds to clicks and taps, and Cumulative Layout Shift reports how much the layout jumps while loading. Field data from real visitors matters more than a lab score from a single test run. To improve loading, compress and properly size images, serve them in modern formats, preload the hero image, defer non-critical scripts and use a content delivery network. Reserve space for images and ads to avoid layout shifts. Performance is a ranking signal, but a modest one; it mostly protects conversions.

@@ -1,0 +1,3 @@
+# Log File Analysis
+
+Server logs record every request, including those of search engine bots. Analysing them shows which URLs are crawled, how often, with which status codes and how long the server needed to respond. Verify that a visitor claiming to be a bot really is one by checking its IP address, because fake user agents are common. Compare crawled URLs with the URLs in your sitemap: pages that are never crawled need better links, and heavily crawled low value URLs waste budget. Spikes of error codes after a release point to broken deployments. Export a month of logs, group requests by directory and status, and track the trend after every technical fix.

@@ -1,0 +1,3 @@
+# Internal Linking
+
+Internal links connect the pages of one site. They help crawlers discover content, pass authority from strong pages to weaker ones and show users where to go next. A flat structure keeps important pages within three clicks of the homepage. Use descriptive anchor text instead of "click here", and link from high traffic articles to the pages that should rank. Orphan pages, which no other page links to, are hard for bots to find and should be linked or removed. Breadcrumbs, related article blocks and hub pages create a natural topical structure. After publishing a new article, add links to it from at least three relevant existing pages.

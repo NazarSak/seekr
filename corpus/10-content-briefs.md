@@ -1,0 +1,3 @@
+# Writing Content Briefs
+
+A content brief turns research into instructions a writer can follow. It states the target keyword, the search intent, the audience, the outline with headings, the questions to answer, the entities and terms to cover, and the desired length. Include competitor examples and what makes your page different. A brief should also list internal links to add, the call to action and the tone of voice. Good briefs reduce revision rounds, because the writer knows what success looks like before the first draft. For multilingual projects add the target country, local examples and any words to avoid. Review the finished article against the brief, not against personal taste.

@@ -1,0 +1,3 @@
+# Crawl Budget Explained
+
+Crawl budget is the number of URLs a search engine bot is willing and able to fetch from your site in a given period. Small sites rarely need to worry, but large shops, news sites and sites with faceted navigation often waste their budget on duplicate and parameter URLs. Signs of trouble include important pages that are crawled rarely, new pages that take weeks to appear in the index, and bots spending most requests on filters. To improve crawl efficiency, fix slow server responses, remove redirect chains, block useless parameters in robots.txt, keep the XML sitemap clean and link to important pages from many places. Log file analysis shows where the bot really goes.

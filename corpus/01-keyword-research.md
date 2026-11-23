@@ -1,0 +1,3 @@
+# Keyword Research Basics
+
+Keyword research is the process of finding the words people type into a search engine when they want something. Start with seed keywords from your product, then expand them with autocomplete suggestions, related searches and competitor pages. For every keyword record the monthly search volume, the difficulty and the search intent. A keyword with huge volume but the wrong intent will bring visitors who never convert. Group similar keywords into clusters and map each cluster to exactly one page, so your own pages do not compete with each other. Long tail keywords have lower volume but are easier to rank for and usually convert better. Revisit the list every quarter, because language and trends change.

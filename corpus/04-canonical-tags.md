@@ -1,0 +1,3 @@
+# Canonical Tags
+
+A canonical tag tells search engines which URL is the preferred version of a page when several URLs show the same or very similar content. Duplicates appear through tracking parameters, sorting options, http and https versions, and trailing slashes. The tag is a hint, not a command: if the canonical points to a page that looks different, the engine may ignore it. Every indexable page should carry a self referencing canonical. Never combine a canonical to another page with a noindex tag, and never point a canonical at a redirecting or blocked URL. Check the canonicals in your crawl reports and compare them with the URL that Google actually selected.

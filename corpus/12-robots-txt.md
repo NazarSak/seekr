@@ -1,0 +1,3 @@
+# Robots.txt Guide
+
+The robots.txt file lives at the root of a domain and tells crawlers which paths they may fetch. It controls crawling, not indexing: a blocked URL can still appear in results if other sites link to it. To keep a page out of the index, allow crawling and use a noindex directive instead. Group rules by user agent, use the Allow and Disallow directives, and reference the XML sitemap with a Sitemap line. Never block the CSS and JavaScript files that a page needs to render. Test every change before deploying, because a single misplaced slash can block an entire site. Keep the file small, comment unusual rules and review it after each migration.
