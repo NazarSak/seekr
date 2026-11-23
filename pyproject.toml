@@ -1,0 +1,17 @@
+[project]
+name = "seekr"
+version = "1.0.0"
+description = "A small search engine: positional inverted index, TF-IDF/BM25, boolean/phrase/fuzzy queries, web UI."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []  # standard library only, on purpose
+
+[project.scripts]
+seekr = "seekr.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
