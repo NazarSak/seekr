@@ -29,6 +29,12 @@
   img { max-width:100%; border:1px solid var(--line); border-radius:8px; }
   table { border-collapse:collapse; width:100%; font-size:.95rem; } td,th { border-bottom:1px solid var(--line); padding:.4rem .5rem; text-align:left; }
   code { background:var(--card); padding:.1em .35em; border-radius:4px; font-size:.92em; }
+  h3 { margin:1.6rem 0 .3rem; font-size:1.08rem; }
+  .pipe { display:flex; flex-wrap:wrap; gap:.4rem; margin:.7rem 0; }
+  .tok { border:1px solid var(--line); border-radius:6px; padding:.25rem .5rem; background:var(--card); font:13px/1.4 ui-monospace,Consolas,monospace; text-align:center; }
+  .tok small { display:block; color:var(--muted); } .tok.stop { opacity:.5; text-decoration:line-through; } .tok b { color:var(--accent); }
+  #pipe-in,#post-in { width:100%; padding:.55rem .7rem; font-size:1rem; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg); }
+  .post { font:13px/1.55 ui-monospace,Consolas,monospace; background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.5rem .7rem; margin:.7rem 0; overflow-x:auto; }
   .note { color:var(--muted); font-size:.9rem; }
 </style>
 </head>
@@ -56,6 +62,25 @@
   <div id="meta"></div>
   <div id="out"></div>
   <p class="note">Supported here: implicit AND, <code>OR</code>, <code>NOT</code> / <code>-term</code>, <code>"exact phrase"</code>. Fuzzy (<code>~</code>), prefix (<code>*</code>), grouping and BM25 are in the Python version.</p>
+
+  <h2>How it works, step by step</h2>
+  <p class="note">Search is fast because the work is done <em>before</em> you type. Each step below is live: change the text and watch it.</p>
+
+  <h3>1. Turn text into terms</h3>
+  <p>Every document and every query goes through the same pipeline: split into words, lowercase, drop stop words (too common to help), then reduce word forms to a stem so "crawling" and "crawled" meet at "crawl". Each kept term remembers its position.</p>
+  <input type="text" id="pipe-in" value="Crawling budgets are wasted on duplicate URLs" aria-label="Text to analyze">
+  <div id="pipe-out"></div>
+
+  <h3>2. Build the inverted index</h3>
+  <p>The index is like the index at the back of a book: <code>term → {document → [positions]}</code>. Looking up a word is one dictionary access, so it does not matter how many documents do <em>not</em> contain it. Pick a term from the bundled corpus:</p>
+  <input type="text" id="post-in" value="budget" aria-label="Term to look up">
+  <div id="post-out"></div>
+
+  <h3>3. Rank the matches</h3>
+  <p><code>score = Σ (1 + ln tf) · ln(1 + N/df) / √length</code>. A word repeated ten times counts less than ten times; a rare word says more than a common one; long documents are damped. Tick "explain scores" in the search box above to see these numbers for any result.</p>
+
+  <h3>4. Why it is worth it</h3>
+  <p>Scanning every file for every query costs time proportional to the whole collection. The index answers from a dictionary. On 20,000 synthetic documents (48 MB) a rare-term query takes about 4 ms against about 500 ms for scanning all files. On the 12 bundled articles both are instant, because the collection is tiny; the benefit only appears at scale.</p>
 
   <h2>Terminal demo</h2>
   <img src="demo.gif" alt="Terminal demo of seekr: index, search with explanation, phrase search, fuzzy search, benchmark">
@@ -230,7 +255,28 @@ document.getElementById("why").addEventListener("change", render);
 document.querySelectorAll(".chips a").forEach(a => a.addEventListener("click", e => {
   e.preventDefault(); document.getElementById("q").value = a.dataset.q; render();
 }));
-fetch("corpus.json").then(r => r.json()).then(d => { build(d); render(); })
+
+function renderPipe() {
+  const text = document.getElementById("pipe-in").value, out = document.getElementById("pipe-out");
+  const toks = [...text.matchAll(WORD)].map((m, i) => {
+    const raw = m[0].toLowerCase().replace(/’/g, "'"), stop = STOP.has(raw);
+    return `<div class="tok${stop ? " stop" : ""}">${esc(m[0])}<small>${stop ? "stop word" : "→ <b>" + esc(stem(raw)) + "</b>"}</small><small>pos ${i}</small></div>`;
+  });
+  out.innerHTML = '<div class="pipe">' + (toks.join("") || '<span class="note">type some text</span>') + "</div>";
+}
+function renderPost() {
+  const raw = document.getElementById("post-in").value.trim(), out = document.getElementById("post-out");
+  const toks = analyze(raw);
+  if (!toks.length) { out.innerHTML = '<div class="post">that is a stop word or empty: it is not indexed</div>'; return; }
+  const t = toks[0][0], m = POST.get(t);
+  if (!m) { out.innerHTML = `<div class="post">"${esc(t)}" is not in the index (0 documents)</div>`; return; }
+  const rows = [...m.entries()].map(([d, pos]) => `${esc(DOCS[d].path.padEnd(26))} tf=${pos.length}  positions [${pos.join(", ")}]`).join("\n");
+  out.innerHTML = `<div class="post"><b>${esc(t)}</b> &rarr; ${m.size} of ${DOCS.length} documents (df=${m.size}, idf=${idf(t).toFixed(3)})<pre style="margin:.4rem 0 0">${rows}</pre></div>`;
+}
+document.getElementById("pipe-in").addEventListener("input", renderPipe);
+document.getElementById("post-in").addEventListener("input", renderPost);
+renderPipe();
+fetch("corpus.json").then(r => r.json()).then(d => { build(d); render(); renderPost(); })
   .catch(() => { document.getElementById("meta").textContent = "could not load corpus.json"; });
 </script>
 </body>
